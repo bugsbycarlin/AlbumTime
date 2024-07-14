@@ -1,0 +1,59 @@
+{
+  "name": "AlbumTime",
+  "version": "0.1.0",
+  "description": "application",
+  "main": "Source/Electron_Wrapper/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build-application": "electron-builder -w"
+  },
+  "author": "AlphaZoo",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^18.3.15",
+    "electron-builder": "^23.0.3",
+    "electron-notarize": "^1.1.1",
+    "electron-settings": "^4.0.2",
+    "electron-settings": "^4.0.2",
+    "fontfaceobserver": "^2.3.0",
+    "node-cmd": "^5.0.0",
+    "npm": "^8.8.0"
+  },
+  "build": {
+    "appId": "com.electron.albumtime",
+    "productName": "AlbumTime",
+    "copyright": "Copyright 2024 AlphaZoo LLC",
+    "afterSign": "Source/Electron_Wrapper/notarize.js",
+    "directories": {
+      "output": "../Release/AlbumTime/"
+    },
+    "dmg": {
+      "sign": false,
+      "contents": [
+        {
+          "x": 320,
+          "y": 240
+        }
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "./Icons/album_time.ico"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg",
+      "icon": "./Icons/album_time.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist"
+    }
+  },
+  "dependencies": {
+    "builder-util": "^24.9.4",
+    "electron-settings": "^4.0.2",
+    "fontfaceobserver": "^2.3.0"
+  }
+}
