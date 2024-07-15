@@ -46,6 +46,9 @@ class Display extends Screen {
   initialize(width, height) {
     this.state = null;
 
+    this.width = width;
+    this.height = height;
+
     this.albums = [];
 
     this.layers = {};
@@ -74,35 +77,56 @@ class Display extends Screen {
       album_time.style.fill = font_colors[i];
     }
 
-    async function makeAlbums(){
-      let choices = [];
-      for (let i = 0; i < 10; i++) {
-        choices.push(dice(69));
-      }
-      let names = choices.map(x => "Art/test_covers/folder_" + x + ".jpg");
-      console.log(names);
-      const assetsPromise = PIXI.Assets.load(names);
-      assetsPromise.then((assets) => {
-        for (let i = 0; i < 10; i++) {
-          let cover = names[i];
-          let test_album = new PIXI.Container();
-          // this.albums.push(test_album);
-          test_album.position.set(width * (0.3 + 0.4 * Math.random()), height * (0.3 + 0.4 * Math.random()));
-          layers["albums"].addChild(test_album);
 
-          makeBlank(test_album, 302, 302, 0, 0, 0x534745, 0.5, 0.5, false)
-          makeBlank(test_album, 304, 304, 3, 3, 0x534745, 0.5, 0.5, false)
-          makeBlank(test_album, 300, 300, 2, 2, 0xD19C56, 0.5, 0.5, false)
-          let album_cover = makeSprite(cover, test_album, 0, 0, 0.5, 0.5, false)
-          album_cover.scale.set(300 / album_cover.width, 300 / album_cover.height)
-
-          test_album.eventMode = 'static';
-          test_album.cursor = 'pointer';
-          test_album.on('pointerdown', onDragStart, test_album);
+    let request = new XMLHttpRequest();
+      request.open("GET", "Data/master_list.txt", true);
+      request.responseType = "text";
+      request.onload = function(e) {
+        game.master_list = []
+        let master_list_text = this.response.split("\n");
+        console.log(master_list_text);
+        for (let i = 0; i < master_list_text.length; i += 4) {
+          game.master_list.push({
+            path: master_list_text[i + 1],
+            artist: master_list_text[i + 2],
+            album: master_list_text[i + 3],
+          })
         }
-      });
+
+        game.screens["display"].makeAlbums();
+      }
+      request.send();
+  }
+
+  async makeAlbums() {
+    let layers = this.layers;
+
+    let choices = [];
+    for (let i = 0; i < 10; i++) {
+      choices.push(dice(game.master_list.length));
     }
-    makeAlbums();
+    let names = choices.map(x => "Data/" + game.master_list[x].artist + " - " + game.master_list[x].album + ".jpg");
+    console.log(names);
+    const assetsPromise = PIXI.Assets.load(names);
+    assetsPromise.then((assets) => {
+      for (let i = 0; i < 10; i++) {
+        let cover = names[i];
+        let test_album = new PIXI.Container();
+        // this.albums.push(test_album);
+        test_album.position.set(this.width * (0.3 + 0.4 * Math.random()), this.height * (0.3 + 0.4 * Math.random()));
+        layers["albums"].addChild(test_album);
+
+        makeBlank(test_album, 302, 302, 0, 0, 0x534745, 0.5, 0.5, false)
+        makeBlank(test_album, 304, 304, 3, 3, 0x534745, 0.5, 0.5, false)
+        makeBlank(test_album, 300, 300, 2, 2, 0xD19C56, 0.5, 0.5, false)
+        let album_cover = makeSprite(cover, test_album, 0, 0, 0.5, 0.5, false)
+        album_cover.scale.set(300 / album_cover.width, 300 / album_cover.height)
+
+        test_album.eventMode = 'static';
+        test_album.cursor = 'pointer';
+        test_album.on('pointerdown', onDragStart, test_album);
+      }
+    });
   }
 
   // Regular update method

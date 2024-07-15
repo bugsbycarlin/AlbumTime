@@ -192,8 +192,7 @@ class Game {
       ["living_room_floor_1","living_room_floor_2","living_room_floor_3",
        "living_room_floor_4","living_room_floor_5","living_room_floor_6",
        "living_room_floor_7","living_room_floor_8","living_room_floor_9",
-       "Wonderbar.otf",
-       "Art/test_covers/folder_9.jpg"]
+       "Wonderbar.otf",]
     );
     assetsPromise.then((assets) => {
       console.log("the assets");
