@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "build-application": "electron-builder -w"
+    "build-application": "electron-builder -m"
   },
   "author": "AlphaZoo",
   "license": "MIT",
@@ -44,7 +44,7 @@
     "mac": {
       "category": "public.app-category.productivity",
       "target": "dmg",
-      "icon": "./Icons/album_time.icns",
+      "icon": "./Icons/albumtime.icns",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "entitlements.mac.plist",

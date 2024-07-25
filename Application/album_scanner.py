@@ -1,6 +1,10 @@
 
 import eyed3
+import io
+import numpy as np
+import random
 import os
+from PIL import Image
 import sys
 
 locations_filename = sys.argv[1]
@@ -64,9 +68,40 @@ with open("Data/master_list.txt", "w") as master_list_file:
           album
         ))
 
-        album_cover_filename = artist + " - " + album + ".jpg"
+        album_cover_filename = artist + " - " + album + ".png"
         
-        image = song.tag.images[0]
-        image_file = open("Data/" + album_cover_filename, "wb")
-        image_file.write(image.image_data)
-        image_file.close()
+        try:
+          image = song.tag.images[0]
+          img_bytes = io.BytesIO(image.image_data)
+          photo = Image.open(img_bytes).convert('RGBA')
+          photo = photo.resize((300, 300))
+
+          on_off = 1
+          ni = np.array(photo)
+
+          for i in range(0, 300):
+            if random.randint(0, 100) < 10:
+              on_off = 1 if on_off == 0 else 0
+            ni[299, i, 3] = 255 * on_off
+          for i in range(0, 300):
+            if random.randint(0, 100) < 10:
+              on_off = 1 if on_off == 0 else 0
+            ni[0, i, 3] = 255 * on_off
+          for i in range(0, 300):
+            if random.randint(0, 100) < 10:
+              on_off = 1 if on_off == 0 else 0
+            ni[i, 299, 3] = 255 * on_off
+          for i in range(0, 300):
+            if random.randint(0, 100) < 10:
+              on_off = 1 if on_off == 0 else 0
+            ni[i, 0, 3] = 255 * on_off
+
+          Image.fromarray(ni).save("Data/" + album_cover_filename, format="png")
+        except Exception as e:
+          print("Exception is")
+          print(e)
+          print("HOOOOO")
+
+        # image_file = open("Data/" + album_cover_filename, "wb")
+        # image_file.write(image.image_data)
+        # image_file.close()

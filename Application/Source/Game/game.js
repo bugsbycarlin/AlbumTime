@@ -175,6 +175,7 @@ class Game {
     Assets.add({ alias: "living_room_floor_7", src: "Art/living_room_floor_7.png" });
     Assets.add({ alias: "living_room_floor_8", src: "Art/living_room_floor_8.png" });
     Assets.add({ alias: "living_room_floor_9", src: "Art/living_room_floor_9.png" });
+    Assets.add({ alias: "record_player_smaller", src: "Art/record_player_smaller.png" });
     Assets.add({ alias: "Wonderbar.otf", src:"Wonderbar.otf", data: { scaleMode: PIXI.SCALE_MODES.NEAREST }});
 
 
@@ -192,6 +193,7 @@ class Game {
       ["living_room_floor_1","living_room_floor_2","living_room_floor_3",
        "living_room_floor_4","living_room_floor_5","living_room_floor_6",
        "living_room_floor_7","living_room_floor_8","living_room_floor_9",
+       "record_player_smaller",
        "Wonderbar.otf",]
     );
     assetsPromise.then((assets) => {
