@@ -45,6 +45,9 @@ function onDragEnd()
           && dragTarget.y > height - 300 && dragTarget.y <= height * 1.1) {
           dragTarget.x = width / 2;
           dragTarget.y = height / 2;
+          let path = dragTarget.path;
+          console.log(path)
+          window.openPath(path);
         }
         dragTarget = null;
     }
@@ -119,36 +122,71 @@ class Display extends Screen {
   async makeAlbums() {
     let layers = this.layers;
 
+    // Keep whatever albums are the top of the screen
+    let keepers = [];
+    for (let i = 0; i < layers["albums"].children.length; i++) {
+      let album = layers["albums"].children[i];
+      if (album.y < this.game_height / 3) {
+        keepers.push(album);
+      }
+    }
+    layers["albums"].removeChildren();
+    for (let i = 0; i < keepers.length; i++) {
+      layers["albums"].addChild(keepers[i]);
+    }
+
+    // Add the new choices
     let choices = [];
     for (let i = 0; i < 10; i++) {
       choices.push(dice(game.master_list.length));
     }
     let info = choices.map(x => game.master_list[x]);
     let names = choices.map(x => "Data/" + game.master_list[x].artist + " - " + game.master_list[x].album + ".png");
+    console.log(info);
+    console.log(names);
     const assetsPromise = PIXI.Assets.load(names);
     assetsPromise.then((assets) => {
       let direction = 1;
       if (dice(2) == 2) direction = -1;
+      let cover = "";
       for (let i = 0; i < 10; i++) {
-        let cover = names[i];
-        let test_album = new PIXI.Container();
+        try {
+          cover = names[i];
+          // cover = "Data/Joe Satriani - Is There Love in Space?.png"
+          // cover = "Data/The Beatles - Anthology 2 (disc 1).png"
+          // console.log(cover);
 
-        test_album.position.set(this.game_width * 0.5 - direction * this.game_width * 0.25 + direction * this.game_width * 0.05 * i - 5 + dice(10) - 50, -50 + this.game_height * (0.5 + 0.2 * Math.random()));
-        layers["albums"].addChild(test_album);
+          let new_album = new PIXI.Container();
 
-        let b = makeBlank(test_album, 303, 303, 6, 6, 0x000000, 0.5, 0.5, false)
-        b.alpha = 0.3
-        makeBlank(test_album, 300, 300, 2, 2, 0x534745, 0.5, 0.5, false)
-        let album_cover = makeSprite(cover, test_album, 0, 0, 0.5, 0.5, false)
-        album_cover.scale.set(300 / album_cover.width, 300 / album_cover.height)
+          new_album.position.set(this.game_width * 0.5 - direction * this.game_width * 0.28 + direction * this.game_width * 0.07 * i - 5 + dice(10), this.game_height * (0.5 + 0.2 * Math.random()));
+          let b = makeBlank(new_album, 303, 303, 6, 6, 0x000000, 0.5, 0.5, false)
+          b.alpha = 0.3
+          makeBlank(new_album, 300, 300, 2, 2, 0x534745, 0.5, 0.5, false)
+          let album_cover = makeSprite(cover, new_album, 0, 0, 0.5, 0.5, false)
+          album_cover.scale.set(300 / album_cover.width, 300 / album_cover.height)
 
-        test_album.album_name = game.master_list[choices[i]].artist + " - " + game.master_list[choices[i]].album;
-        test_album.scale.set(0.75, 0.75)
-        test_album.eventMode = 'static';
-        test_album.cursor = 'pointer';
-        test_album.on('pointerdown', onDragStart, test_album);
+          new_album.album_name = game.master_list[choices[i]].artist + " - " + game.master_list[choices[i]].album;
+          new_album.path = game.master_list[choices[i]].path;
+          new_album.scale.set(0.75, 0.75)
+          new_album.eventMode = 'static';
+          new_album.cursor = 'pointer';
+          new_album.on('pointerdown', onDragStart, new_album);
+
+          layers["albums"].addChild(new_album);
+        } catch(err) {
+          console.log(cover);
+          console.log("Missed that one")
+        }
       }
     });
+  }
+
+  keyDown(ev) {
+    let key = ev.key;
+
+    if (key === "r") {
+      this.makeAlbums();
+    }
   }
 
   // Regular update method

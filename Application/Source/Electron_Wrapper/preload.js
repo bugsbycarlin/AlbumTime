@@ -7,3 +7,7 @@
 //
 
 const { ipcRenderer } = require('electron')
+
+window.openPath = function(file_path) {
+  return ipcRenderer.sendSync('synchronous-message', ["openPath", file_path]);
+}

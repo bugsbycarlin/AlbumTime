@@ -12,6 +12,7 @@ const { app, ipcMain, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const settings = require('electron-settings');
+const { exec } = require('child_process');
 
 function createWindow () {
   // Create the browser window.
@@ -40,6 +41,29 @@ function createWindow () {
 
     // and load the index.html of the app.
     mainWindow.loadFile('index.html')
+
+    ipcMain.on('synchronous-message', (event, arg) => {
+      if (arg[0] === "openPath") {
+        //find "/Users/bugsbycarlin/Dropbox/Music/Artists/Chvrches/Chvrches - The Bones Of What You Believe (2013)" -name "*.mp3" -maxdepth 1 -type f -exec open {} +
+        let path = arg[1];
+        console.log("I have a path");
+        console.log(path);
+        let command =  "find \"" + path + "\" -name \"*.mp3\" -maxdepth 1 -type f -exec open {} +"
+
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`Stderr: ${stderr}`);
+            return;
+          }
+          console.log(`Output:\n${stdout}`);
+        });
+        event.returnValue = true;
+      }
+    });
   });
 }
 
